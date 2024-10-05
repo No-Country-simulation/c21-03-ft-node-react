@@ -1,0 +1,11 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "eslint.validate": ["typescript", "typescriptreact"],
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+  "editor.insertSpaces": false,
+  "editor.detectIndentation": false,
+  "prettier.documentSelectors": [".ts", "**/*.ts", "ts", "**/*.tsx", ".tsx", "tsx"],
+  "tailwindCSS.classAttributes": ["className"]
+}

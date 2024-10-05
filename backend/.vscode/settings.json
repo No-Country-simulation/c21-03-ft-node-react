@@ -1,0 +1,10 @@
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "prettier.documentSelectors": [".ts", "**/*.ts", "ts"],
+  "editor.formatOnSave": true,
+  "eslint.validate": ["typescript"],
+  "typescript.format.insertSpaceBeforeFunctionParenthesis": false,
+  "typescript.format.insertSpaceAfterFunctionKeywordForAnonymousFunctions": false,
+  "editor.insertSpaces": false,
+  "editor.detectIndentation": false
+}
