@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "rootDir": "./src",
+    "target": "ES6",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "noEmit": true,
+    "rootDir": "./",
     "baseUrl": "./",
-    "paths": {},
     "outDir": "./dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     "removeComments": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
