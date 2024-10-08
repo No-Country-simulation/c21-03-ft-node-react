@@ -8,8 +8,10 @@ interface UserDocument extends Document {
     last_name: string
   }
   email: string
-  phone: string
   password: string
+  birthdate: string
+  phone: string
+  balance: number
   createdAt: Date
   updatedAt: Date
   isModified: (path: string) => boolean
@@ -39,15 +41,23 @@ const userSchema = new Schema<UserDocument>({
     match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
     unique: true,
   },
-  phone: {
-    type: String,
-    required: true,
-  },
   password: {
     type: String,
     required: true,
     minlength: [6, "Introducir al menos 6 caracteres."],
     maxlength: [16, "No introducir más de 16 caracteres."],
+  },
+  phone: {
+    type: String,
+    required: true,
+  },
+  birthdate: {
+    type: String,
+    requiured: true
+  },
+  balance: {
+    type: Number,
+    required: true
   },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
