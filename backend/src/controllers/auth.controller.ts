@@ -1,6 +1,7 @@
 import { Request, Response } from "express"
 import User from "../models/user.model"
 import jwt from "jsonwebtoken"
+import bcrypt from "bcrypt"
 
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
