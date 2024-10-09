@@ -26,7 +26,13 @@ class AuthController {
         expiresIn: "1h",
       })
 
-      res.status(201).json({ token })
+      res.cookie("token", token, {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 3600000,
+      })
+
+      res.status(201).json("Your account has been created!")
     } catch (error) {
       console.error("Error in user registration: ", error)
       const errorMessage = (error as Error).message || "Unknown error"
@@ -55,7 +61,15 @@ class AuthController {
         expiresIn: "1h",
       })
 
-      res.status(200).json({ token })
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 3600000,
+      })
+
+      // console.log("cookies:", document.cookie)
+
+      res.status(200).json("Logged!")
       return
     } catch (error) {
       console.error("Error logging in user: ", error)

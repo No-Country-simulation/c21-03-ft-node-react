@@ -26,13 +26,13 @@ export default function UserForm({
     const password: string = target.password.value
 
     if (typeForm === "login") {
-      // Login
+      // login
       const user: object = { email, password }
       signIn(user)
     }
 
     if (typeForm === "createAccount") {
-      // Create account
+      // create an account
       const name: string = target.uName.value
       const surname: string = target.surname.value
       const username: string = target.username.value
@@ -54,10 +54,11 @@ export default function UserForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
       })
 
       if (!response.ok) {
-        throw new Error("Error creating the account")
+        throw new Error("Error creando la cuenta")
       }
 
       const json = await response.json()
@@ -75,6 +76,7 @@ export default function UserForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
+        credentials: "include",
       })
 
       if (!response.ok) {
