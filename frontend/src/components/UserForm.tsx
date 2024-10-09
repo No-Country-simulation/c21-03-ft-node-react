@@ -26,12 +26,65 @@ export default function UserForm({
     const password: string = target.password.value
 
     if (typeForm === "login") {
-      // Acá irá la lógica para iniciar sesión
+      // Lógica para iniciar sesión
+      const user: object = { email, password }
+      signIn(user)
     }
 
     if (typeForm === "createAccount") {
-      // Acá irá la lógica para crear cuenta
-      const fullName = target.fullName.value
+      // Lógica para crear cuenta
+      const name: string = target.uName.value
+      const surname: string = target.surname.value
+      const username: string = target.username.value
+      const birthDate: string = target.birthDate.value
+      const phone: string = target.phone.value
+
+      const user: object = { username, name, surname }
+
+      const userData: object = { user, email, password, birthDate, phone, balance: 0 }
+      signUp(userData)
+    }
+  }
+
+  const signUp = async (data: object) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/sign-up", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error("Error creando la cuenta")
+      }
+
+      const json = await response.json()
+      console.log(json)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const signIn = async (data: object) => {
+    try {
+      const response = await fetch("http://localhost:8000/api/auth/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) {
+        throw new Error("Error iniciando sesión")
+      }
+
+      const json = await response.json()
+      console.log(json)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -42,7 +95,30 @@ export default function UserForm({
         <div>
           <input type="email" id="email" placeholder="Email" className="input-form" />
           {typeForm === "createAccount" && (
-            <input type="text" id="fullName" placeholder="Nombre completo" className="input-form" />
+            <>
+              <div className="form-full-name">
+                <input type="text" id="uName" placeholder="Nombre" className="input-form-name" />
+                <input
+                  type="text"
+                  id="surname"
+                  placeholder="Apellido"
+                  className="input-form-name"
+                />
+              </div>
+              <input
+                type="text"
+                id="username"
+                placeholder="Nombre de usuario"
+                className="input-form"
+              />
+              <input type="date" id="birthDate" className="input-form" />
+              <input
+                type="tel"
+                id="phone"
+                placeholder="Número de teléfono"
+                className="input-form"
+              />
+            </>
           )}
           <input
             type="password"
