@@ -40,13 +40,15 @@ class AuthController {
       const user = await User.findOne({ email })
 
       if (!user) {
-        res.status(400).json({ message: "Correo o contraseña inválidos" })
+        res.status(400).json({ message: "Email or password invalid" })
+        return
       }
 
-      const isMatch = await bcrypt.compare(password, user!.password)
+      const isMatch = await user!.validatePassword(password)
 
       if (!isMatch) {
-        res.status(400).json({ message: "Correo o contraseña inválidos" })
+        res.status(400).json({ message: "Email or password invalid" })
+        return
       }
 
       const token = jwt.sign({ _id: user!._id }, process.env.JWT_SECRET || "secret", {
@@ -54,10 +56,12 @@ class AuthController {
       })
 
       res.status(200).json({ token })
+      return
     } catch (error) {
       console.error("Error logging in user: ", error)
       const errorMessage = (error as Error).message || "Unknown error"
       res.status(500).json({ message: "Sign in failed", error: errorMessage })
+      return
     }
   }
 }
