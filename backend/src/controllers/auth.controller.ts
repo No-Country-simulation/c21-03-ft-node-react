@@ -62,12 +62,10 @@ class AuthController {
       })
 
       res.cookie("token", token, {
-        httpOnly: true,
+        httpOnly: false,
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600000,
       })
-
-      // console.log("cookies:", document.cookie)
 
       res.status(200).json("Logged!")
       return
@@ -76,6 +74,21 @@ class AuthController {
       const errorMessage = (error as Error).message || "Unknown error"
       res.status(500).json({ message: "Sign in failed", error: errorMessage })
       return
+    }
+  }
+  async logOut(req: Request, res: Response): Promise<void> {
+    try {
+      res.cookie("token", "", {
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
+        expires: new Date(0),
+      })
+
+      res.status(200).json({ message: "Logged out successfully" })
+      return
+    } catch (error) {
+      console.error("Error logging out user: ", error)
+      res.status(500).json({ message: "Logout failed", error: (error as Error).message })
     }
   }
 }
