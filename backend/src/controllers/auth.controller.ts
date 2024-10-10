@@ -7,9 +7,20 @@ class AuthController {
     try {
       const { user, email, password, phone, birthdate, balance } = req.body
 
+      if (!user || !email || !password || !phone || !birthdate) {
+        res.status(400).json({ error: "All fields are required" })
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      if (!emailRegex.test(email)) {
+        res.status(400).json({ error: "Invalid email format" })
+        return
+      }
+
       const userExists = await User.findOne({ email })
       if (userExists) {
         res.status(400).json({ error: "Email already in use" })
+        return
       }
 
       const newUser = new User({
@@ -27,18 +38,39 @@ class AuthController {
       })
 
       res.cookie("token", token, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600000,
       })
 
-      res.status(201).json("Your account has been created!")
-    } catch (error) {
+      res.status(201).json({ message: "Your account has been created!" })
+    } catch (error: unknown) {
       console.error("Error in user registration: ", error)
-      const errorMessage = (error as Error).message || "Unknown error"
-      res.status(500).json({ message: "Registration failed", error: errorMessage })
+
+      if (error instanceof jwt.JsonWebTokenError) {
+        res.status(500).json({
+          message: "Failed to generate authentication token",
+          error: error.message,
+        })
+      } else if (error instanceof Error && error.name === "ValidationError") {
+        res.status(400).json({
+          message: "Validation failed",
+          error: error.message,
+        })
+      } else if (error instanceof Error) {
+        res.status(500).json({
+          message: "Registration failed",
+          error: "Unexpected error occurred: " + error.message,
+        })
+      } else {
+        res.status(500).json({
+          message: "Registration failed",
+          error: "An unknown error occurred",
+        })
+      }
     }
   }
+
   async signIn(req: Request, res: Response): Promise<void> {
     try {
       const { email, password } = req.body
@@ -76,6 +108,7 @@ class AuthController {
       return
     }
   }
+
   async logOut(req: Request, res: Response): Promise<void> {
     try {
       res.cookie("token", "", {
