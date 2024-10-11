@@ -1,5 +1,9 @@
 "use client"
 
+import Header from "@/components/mainPage/Header"
+import Sidebar from "@/components/mainPage/Sidebar"
+import YourBalance from "@/components/mainPage/YourBalance"
+import YourActivity from "@/components/mainPage/YourActivity"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -36,7 +40,14 @@ export default function Home() {
 
   return (
     <>
-      <h1>MAIN</h1> <button onClick={logOut}>Cerrar sesión</button>
+      <Header logout={logOut} />
+      <Sidebar />
+      <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
+        <>
+          <YourBalance />
+          <YourActivity />
+        </>
+      </main>
     </>
   )
 }
