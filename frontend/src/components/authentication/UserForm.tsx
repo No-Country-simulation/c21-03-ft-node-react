@@ -72,14 +72,15 @@ export default function UserForm({
       })
 
       if (!response.ok) {
-        throw new Error("Error creando la cuenta")
+        const errorData = await response.json()
+        throw new Error(errorData.error || "Error creando la cuenta")
       }
 
       const json = await response.json()
       console.log(json)
       router.push("/")
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      console.log(error.mesage)
     }
   }
 
