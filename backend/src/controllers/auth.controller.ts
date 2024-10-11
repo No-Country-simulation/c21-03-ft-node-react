@@ -122,6 +122,34 @@ class AuthController {
     } catch (error) {
       console.error("Error logging out user: ", error)
       res.status(500).json({ message: "Logout failed", error: (error as Error).message })
+      return
+    }
+  }
+
+  async getData(req: Request, res: Response): Promise<void> {
+    try {
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+
+      if (!token) {
+        res.status(401).json({ message: "Access denied. No token provided" })
+        return
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+
+      const user = await User.findById(decoded._id).select("-password")
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" })
+        return
+      }
+
+      res.status(200).json(user)
+
+      return
+    } catch (error) {
+      console.log(error)
+      return
     }
   }
 }

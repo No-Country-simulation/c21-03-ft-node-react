@@ -6,10 +6,12 @@ import YourBalance from "@/components/mainPage/YourBalance"
 import YourActivity from "@/components/mainPage/YourActivity"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { useUserDataStore } from "@/store/userDataStore"
 
 export default function Home() {
   const router = useRouter()
   const [isLogged, setIsLogged] = useState<boolean>(false)
+  const { getUserData, userData } = useUserDataStore()
 
   useEffect(() => {
     const token = document.cookie.split("; ").find(row => row.startsWith("token="))
@@ -18,6 +20,11 @@ export default function Home() {
       setIsLogged(false)
       router.push("/login")
     }
+  }, [])
+
+  useEffect(() => {
+    console.log("Obteniendo datos del usuario")
+    getUserData()
   }, [])
 
   // This function must be in another file that contains all the async operations to share it between components.
