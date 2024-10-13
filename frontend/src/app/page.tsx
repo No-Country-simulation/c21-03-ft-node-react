@@ -1,5 +1,4 @@
 "use client"
-
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -16,10 +15,9 @@ export default function Home() {
     }
   }, [])
 
-  // This function must be in another file that contains all the async operations to share it between components.
   const logOut = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/logout", {
+      const response = await fetch("http://localhost:4444/api/auth/logout", {
         method: "POST",
         credentials: "include",
       })
@@ -35,8 +33,9 @@ export default function Home() {
   }
 
   return (
-    <>
-      <h1>MAIN</h1> <button onClick={logOut}>Cerrar sesión</button>
-    </>
+    <div>
+      <h1>MAIN</h1>
+      <button onClick={logOut}>Cerrar sesión</button>
+    </div>
   )
 }
