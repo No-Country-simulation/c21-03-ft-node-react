@@ -3,6 +3,7 @@ import cors from "cors"
 import { config } from "dotenv"
 import connectDB from "./db/db"
 import authRoutes from "./routes/auth.routes"
+import transactionRoutes from "./routes/transaction.routes"
 config()
 
 const app = express()
@@ -17,6 +18,7 @@ app.use(
 )
 
 app.use("/api/auth", authRoutes)
+app.use("/api/transaction", transactionRoutes)
 
 const initialize = async () => {
   try {

@@ -54,8 +54,8 @@ class AuthController {
 
       try {
         await newCard.save();
-      } catch (cardError) {
-        console.error("Error saving card: ", cardError);
+      } catch (error) {
+        console.error("Error saving card: ", error);
         res.status(500).json({ error: "Failed to create card" });
         return;
       }
