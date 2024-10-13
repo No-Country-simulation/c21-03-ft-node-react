@@ -9,6 +9,7 @@ class AuthController {
 
       if (!user || !email || !password || !phone || !birthdate) {
         res.status(400).json({ error: "All fields are required" })
+        return
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
