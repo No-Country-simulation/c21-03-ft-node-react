@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose"
 
 export interface CardDocument extends Document {
   userId: string
+  cardOwner: string
   cardNumber: string
   cardExpiry: string
   cardType: string
@@ -17,6 +18,7 @@ export interface CardDocument extends Document {
 
 const cardSchema = new Schema<CardDocument>({
   userId: { type: String, required: true },
+  cardOwner: { type: String, required: true },
   cardNumber: { type: String, required: true },
   cardExpiry: { type: String, required: true },
   cardType: { type: String, required: true },

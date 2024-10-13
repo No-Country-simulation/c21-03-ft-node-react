@@ -39,6 +39,7 @@ class AuthController {
       
       const newCard = new Card({
         userId: savedUser._id,
+        cardOwner: `${user.name.toUpperCase()} ${user.surname.toUpperCase()}`,
         cardNumber: generateCardNumber(),
         cardExpiry: getExpiryDate(),
         cardType: "MASTER_CARD",
