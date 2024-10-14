@@ -1,12 +1,11 @@
 "use client"
-
-import Header from "@/components/mainPage/Header"
-import Sidebar from "@/components/mainPage/Sidebar"
-import YourBalance from "@/components/mainPage/YourBalance"
-import YourActivity from "@/components/mainPage/YourActivity"
+import Header from "@/app/components/mainPage/Header"
+import Sidebar from "@/app/components/mainPage/Sidebar"
+import YourBalance from "@/app/components/mainPage/YourBalance"
+import YourActivity from "@/app/components/mainPage/YourActivity"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { useUserDataStore } from "@/store/userDataStore"
+import { useUserDataStore } from "@/app/store/userDataStore"
 
 export default function Home() {
   const router = useRouter()

@@ -1,6 +1,6 @@
 "use client"
 import { useState, ChangeEvent, FormEvent } from "react"
-import useAuth from "../hooks/useAuth"
+import useAuth from "../../hooks/useAuth"
 import { useRouter } from "next/navigation"
 import "./FormUser.css"
 
