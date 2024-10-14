@@ -1,15 +1,35 @@
 import { create } from "zustand"
 
 interface UserState {
-  userData: object
+  userData: userData
   getUserData: () => Promise<void>
 }
 
+interface userData {
+  user: User
+  email: string
+  phone: string
+  birthdate: string
+  balance: number
+}
+
+interface User {
+  name: string
+  surname: string
+  username: string
+}
+
 export const useUserDataStore = create<UserState>(set => ({
-  userData: {},
+  userData: {
+    user: { name: "", surname: "", username: "" },
+    email: "",
+    phone: "",
+    birthdate: "",
+    balance: 0,
+  },
   getUserData: async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/getdata", {
+      const response = await fetch("http://localhost:4444/api/auth/getdata", {
         method: "GET",
         credentials: "include",
       })

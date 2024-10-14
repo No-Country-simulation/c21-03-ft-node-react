@@ -1,10 +1,14 @@
 import "./sidebarStyles.css"
 
-export default function Sidebar() {
+interface SidebarProps {
+  name: string
+}
+
+export default function Sidebar({ name }: SidebarProps) {
   return (
     <div className="sidebar">
       <div className="logo">
-        <h2>Opciones</h2>
+        <h2>Hola, {name}!</h2>
       </div>
       <nav className="nav">
         <ul>

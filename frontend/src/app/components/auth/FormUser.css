@@ -60,9 +60,10 @@
 .link-form {
   display: flex;
   justify-content: center;
-  padding-top: 0.8rem;
   text-decoration: none;
   font-size: small;
+  margin-top: 1rem;
+  cursor: pointer;
 }
 
 .link-form:hover {

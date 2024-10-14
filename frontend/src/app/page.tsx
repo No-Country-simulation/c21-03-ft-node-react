@@ -22,7 +22,6 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    console.log("Obteniendo datos del usuario")
     getUserData()
   }, [])
 
@@ -46,14 +45,19 @@ export default function Home() {
 
   return (
     <>
-      <Header logout={logOut} />
-      <Sidebar />
-      <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
+      {userData.user.name ? (
         <>
-          <YourBalance />
-          <YourActivity />
+          <Header logout={logOut} />
+          <Sidebar name={userData.user.name} />
+          <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
+            <YourBalance balance={userData.balance} />
+            <YourActivity />
+          </main>
         </>
-      </main>
+      ) : (
+        <p>Cargando...</p>
+        // Have to define a loader
+      )}
     </>
   )
 }

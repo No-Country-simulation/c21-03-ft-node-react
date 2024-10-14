@@ -3,6 +3,7 @@ import { useState, ChangeEvent, FormEvent } from "react"
 import useAuth from "../../hooks/useAuth"
 import { useRouter } from "next/navigation"
 import "./FormUser.css"
+import Link from "next/link"
 
 type FormUserProps = {
   formType: "sign-up" | "sign-in"
@@ -208,6 +209,16 @@ const FormUser = ({ formType }: FormUserProps) => {
         {loading ? "Cargando..." : formType === "sign-up" ? "Registrarse" : "Iniciar Sesión"}
       </button>
       {error && <p style={{ color: "red" }}>{error}</p>}
+
+      {formType === "sign-in" ? (
+        <Link href="/create-account" className="link-form">
+          ¿No tienes cuenta? Crea una aquí
+        </Link>
+      ) : (
+        <Link href="/login" className="link-form">
+          ¿Ya tienes cuenta? Inicia sesión aquí
+        </Link>
+      )}
     </form>
   )
 }
