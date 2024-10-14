@@ -30,7 +30,7 @@ export default function Home() {
   // This function must be in another file that contains all the async operations to share it between components.
   const logOut = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/logout", {
+      const response = await fetch("http://localhost:4444/api/auth/logout", {
         method: "POST",
         credentials: "include",
       })
