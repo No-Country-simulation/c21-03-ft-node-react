@@ -1,6 +1,8 @@
 import { Request, Response } from "express"
 import User from "../models/user.model"
+import Card from "../models/card.model"
 import jwt from "jsonwebtoken"
+import { getExpiryDate, generateCVV, generateCardNumber } from '../utils/card.utils'
 
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
@@ -34,6 +36,31 @@ class AuthController {
       })
 
       const savedUser = await newUser.save()
+      
+      const newCard = new Card({
+        userId: savedUser._id,
+        cardOwner: `${user.name.toUpperCase()} ${user.surname.toUpperCase()}`,
+        cardNumber: generateCardNumber(),
+        cardExpiry: getExpiryDate(),
+        cardType: "MASTER_CARD",
+        cardName: "BANCA_VIRTUAL",
+        cvv: generateCVV(),
+        status: true,
+        limit: 99999,
+        balance: 0,
+        currency: "ARS",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      try {
+        await newCard.save();
+      } catch (error) {
+        console.error("Error saving card: ", error);
+        res.status(500).json({ error: "Failed to create card" });
+        return;
+      }
+
       const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET || "secret", {
         expiresIn: "1h",
       })

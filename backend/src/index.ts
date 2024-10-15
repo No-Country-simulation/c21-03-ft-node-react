@@ -5,6 +5,8 @@ import connectDB from "./db/db"
 import authRoutes from "./routes/auth.routes"
 import cookieParser from "cookie-parser"
 
+import transactionRoutes from "./routes/transaction.routes"
+
 config()
 
 const app = express()
@@ -20,6 +22,7 @@ app.use(
 )
 
 app.use("/api/auth", authRoutes)
+app.use("/api/transaction", transactionRoutes)
 
 const initialize = async () => {
   try {
