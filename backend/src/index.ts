@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes"
 import cookieParser from "cookie-parser"
 
 import transactionRoutes from "./routes/transaction.routes"
+import cardRouter from "./routes/card.routes"
 
 config()
 
@@ -23,6 +24,7 @@ app.use(
 
 app.use("/api/auth", authRoutes)
 app.use("/api/transaction", transactionRoutes)
+app.use("/api/card", cardRouter)
 
 const initialize = async () => {
   try {

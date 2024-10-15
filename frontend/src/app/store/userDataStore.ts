@@ -3,6 +3,7 @@ import { create } from "zustand"
 interface UserState {
   userData: userData
   getUserData: () => Promise<void>
+  getUserCardData: () => Promise<void>
 }
 
 interface userData {
@@ -47,6 +48,25 @@ export const useUserDataStore = create<UserState>(set => ({
       console.log(data)
     } catch (error) {
       console.error((error as Error).message || "An error occurred")
+    }
+  },
+  getUserCardData: async () => {
+    try {
+      // Need to fix the error with de id in the backend, see the console when fetching.
+      const response = await fetch("http://localhost:4444/api/card/getCard", {
+        method: "GET",
+        credentials: "include",
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.message || "Error retrieving user card data")
+      }
+
+      const data = await response.json()
+      console.log(data)
+    } catch (error) {
+      console.log(error)
     }
   },
 }))

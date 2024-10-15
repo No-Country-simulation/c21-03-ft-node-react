@@ -10,7 +10,7 @@ import { useUserDataStore } from "@/app/store/userDataStore"
 export default function Home() {
   const router = useRouter()
   const [isLogged, setIsLogged] = useState<boolean>(false)
-  const { getUserData, userData } = useUserDataStore()
+  const { getUserData, userData, getUserCardData } = useUserDataStore()
 
   useEffect(() => {
     const token = document.cookie.split("; ").find(row => row.startsWith("token="))
@@ -22,7 +22,12 @@ export default function Home() {
   }, [])
 
   useEffect(() => {
-    getUserData()
+    const guscar = async () => {
+      await getUserData()
+      getUserCardData()
+    }
+
+    guscar()
   }, [])
 
   // This function must be in another file that contains all the async operations to share it between components.
