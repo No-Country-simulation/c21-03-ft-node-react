@@ -1,10 +1,19 @@
+import { useRouter } from "next/navigation"
 import "./sidebarStyles.css"
 
 interface SidebarProps {
   name: string
+  id: string
 }
 
-export default function Sidebar({ name }: SidebarProps) {
+export default function Sidebar({ name, id }: SidebarProps) {
+  console.log(id)
+
+  const router = useRouter()
+  const goToUserPage = () => {
+    router.push(`/users/${id}`)
+  }
+
   return (
     <div className="sidebar">
       <div className="logo">
@@ -27,7 +36,7 @@ export default function Sidebar({ name }: SidebarProps) {
               <span className="link-text">Notificaciones</span>
             </a>
           </li>
-          <li>
+          <li onClick={goToUserPage}>
             <a>
               <span className="link-text">Perfil</span>
             </a>

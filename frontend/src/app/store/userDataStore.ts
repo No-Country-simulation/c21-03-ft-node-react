@@ -7,6 +7,7 @@ interface UserState {
 }
 
 interface userData {
+  _id: string
   user: User
   email: string
   phone: string
@@ -31,6 +32,7 @@ interface Card {
 
 export const useUserDataStore = create<UserState>(set => ({
   userData: {
+    _id: "",
     user: { name: "", surname: "", username: "" },
     email: "",
     phone: "",

@@ -3,6 +3,7 @@ import User from "../models/user.model"
 import Card from "../models/card.model"
 import jwt from "jsonwebtoken"
 import { getExpiryDate, generateCVV, generateCardNumber } from "../utils/card.utils"
+import { ObjectId } from "mongoose"
 
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
@@ -172,7 +173,9 @@ class AuthController {
         return
       }
 
-      res.status(200).json(user)
+      const userId = (user._id as ObjectId).toString()
+
+      res.status(200).json({ ...user.toObject(), _id: userId })
 
       return
     } catch (error) {

@@ -67,7 +67,7 @@ export default function Home() {
       ) : userData && userData.card ? (
         <>
           <Header logout={logOut} />
-          <Sidebar name={userData.user.name} />
+          <Sidebar name={userData.user.name} id={userData._id} />
           <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
             <YourBalance balance={userData.card.balance} />
             <YourActivity />
