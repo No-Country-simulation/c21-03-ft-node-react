@@ -9,26 +9,35 @@ import { useUserDataStore } from "@/app/store/userDataStore"
 
 export default function Home() {
   const router = useRouter()
-  const [isLogged, setIsLogged] = useState<boolean>(false)
   const { getUserData, userData, getUserCardData } = useUserDataStore()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
 
   useEffect(() => {
     const token = document.cookie.split("; ").find(row => row.startsWith("token="))
 
     if (!token) {
-      setIsLogged(false)
       router.push("/login")
-    }
+    } else setCheckingAuth(false)
   }, [])
 
   useEffect(() => {
-    const guscar = async () => {
-      await getUserData()
-      getUserCardData()
+    const getAllUserData = async () => {
+      try {
+        await Promise.all([getUserData(), getUserCardData()])
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+        setError(true)
+      }
     }
-
-    guscar()
+    getAllUserData()
   }, [])
+
+  if (checkingAuth) {
+    return null
+  }
 
   // This function must be in another file that contains all the async operations to share it between components.
   const logOut = async () => {
@@ -50,18 +59,22 @@ export default function Home() {
 
   return (
     <>
-      {userData.user.name ? (
+      {loading ? (
+        // Have to define a loader
+        <p>Cargando...</p>
+      ) : error ? (
+        <h1>Error! Por favor, intenta nuevamente.</h1>
+      ) : userData && userData.card ? (
         <>
           <Header logout={logOut} />
           <Sidebar name={userData.user.name} />
           <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
-            <YourBalance balance={userData.balance} />
+            <YourBalance balance={userData.card.balance} />
             <YourActivity />
           </main>
         </>
       ) : (
-        <p>Cargando...</p>
-        // Have to define a loader
+        <p>No se encontraron datos.</p>
       )}
     </>
   )

@@ -70,14 +70,23 @@ class CardController {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
 
-      const card = await Card.findById({ userId: decoded._id })
+      const card = await Card.findOne({ userId: decoded._id })
 
       if (!card) {
         res.status(404).json({ message: "Card not found" })
         return
       }
 
-      res.status(200).json(card)
+      const filteredCard = {
+        balance: card.balance,
+        cardName: card.cardName,
+        cardType: card.cardType,
+        currency: card.currency,
+        limit: card.limit,
+        status: card.status,
+      }
+
+      res.status(200).json(filteredCard)
       return
     } catch (error) {
       console.log(error)

@@ -11,7 +11,7 @@ interface userData {
   email: string
   phone: string
   birthdate: string
-  balance: number
+  card: Card
 }
 
 interface User {
@@ -20,13 +20,22 @@ interface User {
   username: string
 }
 
+interface Card {
+  balance: number
+  cardName: string
+  cardType: string
+  currency: string
+  limit: number
+  status: string
+}
+
 export const useUserDataStore = create<UserState>(set => ({
   userData: {
     user: { name: "", surname: "", username: "" },
     email: "",
     phone: "",
     birthdate: "",
-    balance: 0,
+    card: { balance: 0, cardName: "", cardType: "", currency: "", limit: 0, status: "" },
   },
   getUserData: async () => {
     try {
@@ -41,18 +50,17 @@ export const useUserDataStore = create<UserState>(set => ({
       }
 
       const data = await response.json()
+
       set(state => ({
         ...state,
         userData: data,
       }))
-      console.log(data)
     } catch (error) {
       console.error((error as Error).message || "An error occurred")
     }
   },
   getUserCardData: async () => {
     try {
-      // Need to fix the error with de id in the backend, see the console when fetching.
       const response = await fetch("http://localhost:4444/api/card/getCard", {
         method: "GET",
         credentials: "include",
@@ -64,7 +72,13 @@ export const useUserDataStore = create<UserState>(set => ({
       }
 
       const data = await response.json()
-      console.log(data)
+
+      set(state => ({
+        userData: {
+          ...state.userData,
+          card: data,
+        },
+      }))
     } catch (error) {
       console.log(error)
     }
