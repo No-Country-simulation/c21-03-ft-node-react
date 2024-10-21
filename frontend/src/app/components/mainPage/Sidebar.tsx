@@ -7,11 +7,14 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ name, id }: SidebarProps) {
-  console.log(id)
-
   const router = useRouter()
+
   const goToUserPage = () => {
     router.push(`/users/${id}`)
+  }
+
+  const goToOperationsPage = () => {
+    router.push("/operations")
   }
 
   return (
@@ -26,9 +29,9 @@ export default function Sidebar({ name, id }: SidebarProps) {
               <span className="link-text">Inicio</span>
             </a>
           </li>
-          <li>
+          <li onClick={goToOperationsPage}>
             <a>
-              <span className="link-text">Transferencias</span>
+              <span className="link-text">Operaciones</span>
             </a>
           </li>
           <li>
