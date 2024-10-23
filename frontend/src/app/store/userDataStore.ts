@@ -10,8 +10,6 @@ interface userData {
   _id: string
   user: User
   email: string
-  phone: string
-  birthdate: string
   card: Card
 }
 
@@ -35,15 +33,25 @@ export const useUserDataStore = create<UserState>(set => ({
     _id: "",
     user: { name: "", surname: "", username: "" },
     email: "",
-    phone: "",
-    birthdate: "",
     card: { balance: 0, cardName: "", cardType: "", currency: "", limit: 0, status: "" },
   },
+
   getUserData: async () => {
     try {
-      const response = await fetch("http://localhost:4444/api/auth/getdata", {
+      const token = localStorage.getItem("authToken")
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      }
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`
+      }
+
+      const response = await fetch("http://localhost:8000/api/auth/getdata", {
         method: "GET",
         credentials: "include",
+        headers,
       })
 
       if (!response.ok) {
@@ -61,11 +69,23 @@ export const useUserDataStore = create<UserState>(set => ({
       console.error((error as Error).message || "An error occurred")
     }
   },
+  
   getUserCardData: async () => {
     try {
-      const response = await fetch("http://localhost:4444/api/card/getCard", {
+      const token = localStorage.getItem("authToken")
+
+      const headers: HeadersInit = {
+        "Content-Type": "application/json",
+      }
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`
+      }
+
+      const response = await fetch("http://localhost:8000/api/card/getCard", {
         method: "GET",
         credentials: "include",
+        headers,
       })
 
       if (!response.ok) {
