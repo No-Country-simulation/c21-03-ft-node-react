@@ -28,7 +28,7 @@ const Operations = () => {
           />
         </Link>
       </header>
-      <BalanceCard availableBalance={userData.card.balance} />
+      <BalanceCard availableBalance={userData.card?.balance} />
       <h3 className="mx-auto mb-8 text-center text-[28px] font-light text-[#4F4B4B]">
         Operaciones
       </h3>
