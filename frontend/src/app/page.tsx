@@ -5,6 +5,7 @@ import Header from "@/components/home/Header"
 import BalanceCard from "@/components/BalanceCard"
 import ServicesNavigation from "@/components/home/ServicesNavigation"
 import { useRouter } from "next/navigation"
+import FooterNavBar from "./components/FooterNavBar"
 
 const Home = () => {
   const { getUserData, userData, getUserCardData } = useUserDataStore()
@@ -52,6 +53,9 @@ const Home = () => {
           <div className="h-[74px] w-full bg-[#9747FF]"></div>
         </div>
       </main>
+      <footer>
+        <FooterNavBar />
+      </footer>
     </>
   )
 }

@@ -31,10 +31,16 @@ const Transfer = () => {
       <BalanceCard availableBalance={userData.card.balance} />
       <Title title="Transferir" />
       <Link
-        className="mx-auto mb-[200px] flex h-[60px] w-[240px] items-center justify-center rounded-[80px] bg-[#6630AC] text-center text-base font-bold text-white"
+        className="mx-auto mb-[50px] flex h-[60px] w-[240px] items-center justify-center rounded-[80px] bg-[#6630AC] text-center text-base font-bold text-white"
         href="/transfer-to"
       >
         Nueva cuenta
+      </Link>
+      <Link
+        href="/add-money"
+        className="mx-auto mb-[200px] flex h-[60px] w-[240px] items-center justify-center rounded-[80px] bg-[#6630AC] text-center text-base font-bold text-white"
+      >
+        Cargar Dinero a tu cuenta
       </Link>
     </>
   )

@@ -28,7 +28,7 @@ const NavBar = ({ name }: Props) => {
 
   const handleLogOut = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/auth/logout", {
+      const response = await fetch("http://localhost:4444/api/auth/logout", {
         method: "POST",
         credentials: "include",
       })
