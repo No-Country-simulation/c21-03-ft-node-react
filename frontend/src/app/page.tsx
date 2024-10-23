@@ -1,18 +1,15 @@
 "use client"
-import Header from "@/app/components/mainPage/Header"
-import Sidebar from "@/app/components/mainPage/Sidebar"
-import YourBalance from "@/app/components/mainPage/YourBalance"
-import YourActivity from "@/app/components/mainPage/YourActivity"
-import { useRouter } from "next/navigation"
+import { useUserDataStore } from "@/store/userDataStore"
 import { useEffect, useState } from "react"
-import { useUserDataStore } from "@/app/store/userDataStore"
+import Header from "@/components/home/Header"
+import BalanceCard from "@/components/BalanceCard"
+import ServicesNavigation from "@/components/home/ServicesNavigation"
+import { useRouter } from "next/navigation"
 
-export default function Home() {
-  const router = useRouter()
+const Home = () => {
   const { getUserData, userData, getUserCardData } = useUserDataStore()
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(false)
-  const [checkingAuth, setCheckingAuth] = useState(true)
+  const router = useRouter()
+  const [checkingAuth, setCheckingAuth] = useState<boolean>(true)
 
   useEffect(() => {
     const token = document.cookie.split("; ").find(row => row.startsWith("token="))
@@ -26,56 +23,37 @@ export default function Home() {
     const getAllUserData = async () => {
       try {
         await Promise.all([getUserData(), getUserCardData()])
-        setLoading(false)
       } catch (error) {
-        setLoading(false)
-        setError(true)
+        console.log(error)
       }
     }
     getAllUserData()
   }, [])
 
-  if (checkingAuth) {
-    return null
-  }
-
-  // This function must be in another file that contains all the async operations to share it between components.
-  const logOut = async () => {
-    try {
-      const response = await fetch("http://localhost:4444/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      })
-
-      if (!response.ok) {
-        throw new Error("Error logging out")
-      }
-
-      router.push("/login")
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  if (checkingAuth) return null
 
   return (
     <>
-      {loading ? (
-        // Have to define a loader
-        <p>Cargando...</p>
-      ) : error ? (
-        <h1>Error! Por favor, intenta nuevamente.</h1>
-      ) : userData && userData.card ? (
-        <>
-          <Header logout={logOut} />
-          <Sidebar name={userData.user.name} id={userData._id} />
-          <main style={{ display: "flex", flexDirection: "row", gap: "4rem" }}>
-            <YourBalance balance={userData.card.balance} />
-            <YourActivity />
-          </main>
-        </>
-      ) : (
-        <p>No se encontraron datos.</p>
-      )}
+      <Header name={userData.user.name || "Usuario"} />
+
+      <main>
+        <BalanceCard availableBalance={userData.card?.balance} />
+
+        <section className="mb-8 px-6">
+          <h3 className="mb-8 text-center text-2xl font-light text-[#4F4B4B]">
+            ¿QUÉ QUERES HACER HOY?
+          </h3>
+
+          <ServicesNavigation />
+        </section>
+
+        <div className="mb-[120px]">
+          <h3 className="mb-8 ml-9 text-2xl font-light text-[#4F4B4B]">NOVEDADES</h3>
+          <div className="h-[74px] w-full bg-[#9747FF]"></div>
+        </div>
+      </main>
     </>
   )
 }
+
+export default Home
