@@ -5,7 +5,7 @@ import Header from "@/components/home/Header"
 import BalanceCard from "@/components/BalanceCard"
 import ServicesNavigation from "@/components/home/ServicesNavigation"
 import { useRouter } from "next/navigation"
-import FooterNavBar from "./components/FooterNavBar"
+import FooterNavBar from "@/components/FooterNavBar"
 
 const Home = () => {
   const { getUserData, userData, getUserCardData } = useUserDataStore()
@@ -13,22 +13,28 @@ const Home = () => {
   const [checkingAuth, setCheckingAuth] = useState<boolean>(true)
 
   useEffect(() => {
-    const token = document.cookie.split("; ").find(row => row.startsWith("token="))
+    const checkAuth = () => {
+      const token = document.cookie.split("; ").find(row => row.startsWith("token="))
+      const localToken = localStorage.getItem("authToken")
 
-    if (!token) {
-      router.push("/login")
-    } else setCheckingAuth(false)
-  }, [])
+      if (!token && !localToken) {
+        router.push("/login")
+      } else {
+        setCheckingAuth(false)
+        getAllUserData()
+      }
+    }
 
-  useEffect(() => {
     const getAllUserData = async () => {
       try {
         await Promise.all([getUserData(), getUserCardData()])
       } catch (error) {
-        console.log(error)
+        console.error(error)
+        router.push("/login")
       }
     }
-    getAllUserData()
+
+    checkAuth()
   }, [])
 
   if (checkingAuth) return null
@@ -44,7 +50,6 @@ const Home = () => {
           <h3 className="mb-8 text-center text-2xl font-light text-[#4F4B4B]">
             ¿QUÉ QUERES HACER HOY?
           </h3>
-
           <ServicesNavigation />
         </section>
 
@@ -53,9 +58,8 @@ const Home = () => {
           <div className="h-[74px] w-full bg-[#9747FF]"></div>
         </div>
       </main>
-      <footer>
-        <FooterNavBar />
-      </footer>
+
+      <FooterNavBar />
     </>
   )
 }
