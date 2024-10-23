@@ -8,9 +8,9 @@ import { ObjectId } from "mongoose"
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
     try {
-      const { user, email, password, phone, birthdate, balance } = req.body
+      const { user, email, password } = req.body
 
-      if (!user || !email || !password || !phone || !birthdate) {
+      if (!user || !email || !password) {
         res.status(400).json({ error: "All fields are required" })
         return
       }
@@ -31,9 +31,6 @@ class AuthController {
         user,
         email,
         password: await new User().encryptPassword(password),
-        phone,
-        birthdate,
-        balance,
       })
 
       const savedUser = await newUser.save()
@@ -111,30 +108,32 @@ class AuthController {
         return
       }
 
-      const isMatch = await user!.validatePassword(password)
+      const isMatch = await user.validatePassword(password)
 
       if (!isMatch) {
         res.status(400).json({ message: "Email or password invalid" })
         return
       }
 
-      const token = jwt.sign({ _id: user!._id }, process.env.JWT_SECRET || "secret", {
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || "secret", {
         expiresIn: "1h",
       })
 
       res.cookie("token", token, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600000,
+        sameSite: "lax",
       })
 
-      res.status(200).json("Logged!")
-      return
+      res.status(200).json({
+        message: "Logged in successfully!",
+        token: token,
+      })
     } catch (error) {
       console.error("Error logging in user: ", error)
       const errorMessage = (error as Error).message || "Unknown error"
       res.status(500).json({ message: "Sign in failed", error: errorMessage })
-      return
     }
   }
 
@@ -157,30 +156,48 @@ class AuthController {
 
   async getData(req: Request, res: Response): Promise<void> {
     try {
-      const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+      let token = req.cookies.token
+      const authHeader = req.headers.authorization
+
+      if (authHeader && authHeader.startsWith("Bearer ")) {
+        token = authHeader.slice(7)
+      }
+
+      console.log("Token recibido: ", token)
 
       if (!token) {
         res.status(401).json({ message: "Access denied. No token provided" })
         return
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+        console.log("Decoded token: ", decoded)
 
-      const user = await User.findById(decoded._id).select("-password")
+        const user = await User.findById(decoded._id).select("-password")
 
-      if (!user) {
-        res.status(404).json({ message: "User not found" })
+        if (!user) {
+          res.status(404).json({ message: "User not found" })
+          return
+        }
+
+        const userId = (user._id as ObjectId).toString()
+
+        res.status(200).json({
+          ...user.toObject(),
+          _id: userId,
+        })
+      } catch (jwtError) {
+        console.error("JWT Error:", jwtError)
+        res.status(401).json({ message: "Invalid token" })
         return
       }
-
-      const userId = (user._id as ObjectId).toString()
-
-      res.status(200).json({ ...user.toObject(), _id: userId })
-
-      return
     } catch (error) {
-      console.log(error)
-      return
+      console.error("Error en getData: ", error)
+      res.status(500).json({
+        message: "Server error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      })
     }
   }
 }
