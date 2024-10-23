@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose, { Schema, Document } from "mongoose"
 
 export interface TransactionDocument extends Document {
   senderCardId: string
@@ -17,7 +17,7 @@ const transactionSchema = new Schema({
   description: { type: String, required: true },
   status: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 })
 
 const Transaction = mongoose.model<TransactionDocument>("Transaction", transactionSchema)
