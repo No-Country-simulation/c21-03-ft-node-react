@@ -9,7 +9,6 @@ class TransactionController {
     try {
       const { cardOwner, cardNumber, cardExpiry, cvv, amount, description, receiverId } = req.body
 
-      // Validate input fields (early return to reduce nesting)
       if (
         !cardOwner ||
         !cardNumber ||
@@ -22,8 +21,6 @@ class TransactionController {
         return
       }
 
-      // * Sender logic *
-      // Find the sender card using the cardNumber (this should be unique)
       const senderCard = await Card.findOne({ cardNumber })
       if (!senderCard) {
         res
@@ -32,7 +29,6 @@ class TransactionController {
         return
       }
 
-      // Validate the card details (owner, expiry, cvv). cardNumber is not neccesary in this validation
       if (
         senderCard.cardOwner !== cardOwner ||
         senderCard.cardExpiry !== cardExpiry ||
@@ -42,14 +38,12 @@ class TransactionController {
         return
       }
 
-      // Retrieve sender user ID from the card
       const senderId = senderCard.userId
       if (!senderId) {
         res.status(404).json({ error: "Sender user not found. Please check the card details" })
         return
       }
 
-      // Ensure sender has enough balance to complete the transaction
       if (senderCard.balance < amount) {
         res
           .status(422)
@@ -57,8 +51,6 @@ class TransactionController {
         return
       }
 
-      // * Receiver logic *
-      // Find the receiver's card using userId and cardName (which must be "BANCA_VIRTUAL"). A user can only have one card called "BANCA_VIRTUAL"
       const receiverCard = await Card.findOne({ userId: receiverId, cardName: "BANCA_VIRTUAL" })
 
       if (!receiverCard) {
@@ -66,15 +58,12 @@ class TransactionController {
         return
       }
 
-      // Ensure that the receiver's card balance does not exceed the limit after the transaction
       if (receiverCard.balance + amount > receiverCard.limit) {
         res.status(422).json({ error: "Transaction exceeds the receiver's card limit" })
         return
       }
 
-      // * Transaction logic *
       try {
-        // Perform atomic updates to both sender and receiver cards
         await Promise.all([
           Card.updateOne(
             { _id: senderCard._id },
@@ -94,7 +83,6 @@ class TransactionController {
           ),
         ])
 
-        // Create and store the successful transaction record
         const newTransaction = new Transaction({
           senderCardId: senderCard._id,
           receiverCardId: receiverCard._id,
@@ -109,7 +97,6 @@ class TransactionController {
           transaction: newTransaction,
         })
       } catch (error) {
-        // Even when transaction fails this will be stored with the "unsuccessful" status
         const failedTransaction = new Transaction({
           senderCardId: senderCard._id,
           receiverCardId: receiverCard._id,
@@ -127,6 +114,7 @@ class TransactionController {
       res.status(500).json({ error: "Failed to create transaction" })
     }
   }
+
   async addMoney(req: Request, res: Response): Promise<void> {
     try {
       const { balance } = req.body
