@@ -41,7 +41,7 @@ const Home = () => {
 
   return (
     <>
-      <Header name={userData.user.name || "Usuario"} />
+      <Header name={userData.user.name || ""} />
 
       <main>
         <BalanceCard availableBalance={userData.card?.balance} />
