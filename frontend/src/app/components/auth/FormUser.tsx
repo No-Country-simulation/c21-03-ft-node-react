@@ -1,9 +1,10 @@
 "use client"
 import { useState, ChangeEvent, FormEvent } from "react"
-import useAuth from "../../hooks/useAuth"
+import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
 import "./FormUser.css"
 import Link from "next/link"
+import InputLabel from "./InputLabel"
 
 type FormUserProps = {
   formType: "sign-up" | "sign-in"
@@ -77,137 +78,95 @@ const FormUser = ({ formType }: FormUserProps) => {
     <form onSubmit={handleSubmit} className="form-container">
       {formType === "sign-up" && (
         <>
-          <div>
-            <label className="form-title">Nombre:</label>
-            <input
-              className="input-form text-black"
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Apellido:</label>
-            <input
-              className="input-form text-black"
-              type="text"
-              name="surname"
-              value={formData.surname}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="form-title">Nombre de usuario</label>
-            <input
-              className="input-form text-black"
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Email:</label>
-            <input
-              className="input-form text-black"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Contraseña:</label>
-            <input
-              className="input-form text-black"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Confirmar contraseña</label>
-            <input
-              className="input-form text-black"
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Fecha de Nacimiento:</label>
-            <input
-              className="input-form text-black"
-              type="date"
-              name="birthdate"
-              value={formData.birthdate}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Teléfono:</label>
-            <input
-              className="input-form text-black"
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Balance</label>
-            <input
-              className="input-form text-black"
-              type="tel"
-              name="balance"
-              value={formData.balance}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <InputLabel
+            text="Nombre"
+            type="text"
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Apellido"
+            type="text"
+            name="surname"
+            value={formData.surname}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Nombre de usuario"
+            type="text"
+            name="username"
+            value={formData.username}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Contraseña"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Confirmar contraseña"
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Fecha de Nacimiento"
+            type="date"
+            name="birthdate"
+            value={formData.birthdate}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Teléfono"
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Balance"
+            type="tel"
+            name="balance"
+            value={formData.balance}
+            onChange={handleChange}
+          />
         </>
       )}
+
       {formType === "sign-in" && (
         <>
-          <div>
-            <label className="form-title">Email:</label>
-            <input
-              className="input-form text-black"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div>
-            <label className="form-title">Contraseña:</label>
-            <input
-              className="input-form text-black"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <InputLabel
+            text="Email"
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+          />
+          <InputLabel
+            text="Contraseña"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          />
         </>
       )}
+
       <button type="submit" disabled={loading} className="form-button">
         {loading ? "Cargando..." : formType === "sign-up" ? "Registrarse" : "Iniciar Sesión"}
       </button>
+
       {error && <p style={{ color: "red" }}>{error}</p>}
 
       {formType === "sign-in" ? (
