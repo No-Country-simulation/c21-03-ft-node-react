@@ -14,7 +14,7 @@ export default function AddMoney() {
 
   const addMoney = async (balance: number) => {
     try {
-      const response = await fetch("http://localhost:4444/api/transaction/addMoney", {
+      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/transaction/addMoney", {
         method: "PUT",
         credentials: "include",
         headers: {
