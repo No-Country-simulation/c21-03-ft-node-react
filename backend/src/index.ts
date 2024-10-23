@@ -4,7 +4,6 @@ import { config } from "dotenv"
 import connectDB from "./db/db"
 import authRoutes from "./routes/auth.routes"
 import cookieParser from "cookie-parser"
-
 import transactionRoutes from "./routes/transaction.routes"
 import cardRouter from "./routes/card.routes"
 
