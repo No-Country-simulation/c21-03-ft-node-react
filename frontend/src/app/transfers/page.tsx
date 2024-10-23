@@ -7,6 +7,7 @@ import Image from "next/image"
 
 const Transfer = () => {
   const { userData } = useUserDataStore()
+
   return (
     <>
       <header className="mb-16 flex h-16 items-center justify-between bg-[#F3EDF7] px-6">
@@ -28,7 +29,7 @@ const Transfer = () => {
           />
         </Link>
       </header>
-      <BalanceCard availableBalance={userData.card.balance} />
+      <BalanceCard availableBalance={userData.card?.balance} />
       <Title title="Transferir" />
       <Link
         className="mx-auto mb-[50px] flex h-[60px] w-[240px] items-center justify-center rounded-[80px] bg-[#6630AC] text-center text-base font-bold text-white"
