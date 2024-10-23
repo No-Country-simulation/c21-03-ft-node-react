@@ -1,11 +1,13 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import "@fontsource/open-sans/300.css"
+import "@fontsource/open-sans/400.css"
+import "@fontsource/open-sans/500.css"
+import "@fontsource/open-sans/600.css"
+import "@fontsource/open-sans/700.css"
+import "@fontsource/encode-sans/400.css"
+import "@fontsource/encode-sans/500.css"
+import "@fontsource/encode-sans/700.css"
 import "./globals.css"
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-})
 
 export const metadata: Metadata = {
   title: "Banco virtual",
@@ -19,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.className}`}>{children}</body>
+      <body>{children}</body>
     </html>
   )
 }
