@@ -3,14 +3,12 @@ import bcrypt from "bcrypt"
 
 export interface UserDocument extends Document {
   user: {
-    username: string
     name: string
-    surname: string
   }
   email: string
-  password: string
-  encryptPassword(password: string): Promise<string>
-  validatePassword(password: string): Promise<boolean>
+  password: number
+  encryptPassword(password: number): Promise<number>
+  validatePassword(password: number): Promise<boolean>
   createdAt: Date
   updatedAt: Date
   isModified: (path: string) => boolean
