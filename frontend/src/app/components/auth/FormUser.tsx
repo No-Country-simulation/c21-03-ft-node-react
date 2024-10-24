@@ -146,6 +146,8 @@ const FormUser = ({ formType }: FormUserProps) => {
 
       {formType === "sign-in" && (
         <>
+          <p className="font-open-sans text-4xl font-light text-[#4F4B4B]">Bienvenido</p>
+          <input type="text" maxLength={1} className="" />
           <InputLabel
             text="Email"
             type="email"
@@ -167,16 +169,17 @@ const FormUser = ({ formType }: FormUserProps) => {
         {loading ? "Cargando..." : formType === "sign-up" ? "Registrarse" : "Iniciar Sesión"}
       </button>
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      {formType === "sign-in" ? (
-        <Link href="/create-account" className="link-form">
-          ¿No tienes cuenta? Crea una aquí
-        </Link>
-      ) : (
-        <Link href="/login" className="link-form">
-          ¿Ya tienes cuenta? Inicia sesión aquí
-        </Link>
+      {formType === "sign-in" && (
+        <div>
+          <Link href="/create-account" className="font-roboto text-xs font-normal text-[#4F4B4B]">
+            Crear cuenta
+          </Link>
+          <Link href="/" className="font-roboto text-xs font-normal text-[#4F4B4B]">
+            Olvidaste tu contraseña
+          </Link>
+        </div>
       )}
     </form>
   )
