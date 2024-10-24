@@ -99,9 +99,9 @@ class AuthController {
 
   async signIn(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password } = req.body
+      const { password } = req.body
 
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ password })
 
       if (!user) {
         res.status(400).json({ message: "Email or password invalid" })

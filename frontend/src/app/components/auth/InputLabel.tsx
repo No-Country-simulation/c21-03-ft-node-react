@@ -6,18 +6,20 @@ interface InputAttributeProps {
   name: string
   value: string
   onChange: (e: ChangeEvent<HTMLInputElement>) => void
+  placeholder: string
 }
 
-const InputLabel = ({ text, type, name, value, onChange }: InputAttributeProps) => {
+const InputLabel = ({ text, type, name, value, onChange, placeholder }: InputAttributeProps) => {
   return (
-    <div>
-      <label className="mb-5 text-center text-[#333]">{text}:</label>
+    <div className="mb-8 flex items-center gap-4">
+      <label className="font-encode-sans text-lg font-normal text-[#4F4B4B]">{text}:</label>
       <input
-        className="mb-4 w-full rounded-[4px] border border-solid border-[#ccc] p-[10px] text-base text-black"
+        className="customs-borders mb-4 w-full p-[10px] text-base text-black outline-none font-open-sans placeholder:font-open-sans"
         type={type}
         name={name}
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
         required
       />
     </div>
