@@ -3,13 +3,13 @@ import Transaction from "../models/transaction.model"
 import User from "../models/user.model"
 import jwt from "jsonwebtoken"
 import Card from "../models/card.model"
+import { isValidCVC, isValidCardNumber, isValidExpiryDate } from "../utils/card.utils"
 
 class TransactionController {
   async post(req: Request, res: Response): Promise<void> {
     try {
       const { cardOwner, cardNumber, cardExpiry, cvv, amount, description, receiverId } = req.body
 
-      // Validate input fields (early return to reduce nesting)
       if (
         !cardOwner ||
         !cardNumber ||
@@ -22,8 +22,6 @@ class TransactionController {
         return
       }
 
-      // * Sender logic *
-      // Find the sender card using the cardNumber (this should be unique)
       const senderCard = await Card.findOne({ cardNumber })
       if (!senderCard) {
         res
@@ -32,7 +30,6 @@ class TransactionController {
         return
       }
 
-      // Validate the card details (owner, expiry, cvv). cardNumber is not neccesary in this validation
       if (
         senderCard.cardOwner !== cardOwner ||
         senderCard.cardExpiry !== cardExpiry ||
@@ -42,14 +39,12 @@ class TransactionController {
         return
       }
 
-      // Retrieve sender user ID from the card
       const senderId = senderCard.userId
       if (!senderId) {
         res.status(404).json({ error: "Sender user not found. Please check the card details" })
         return
       }
 
-      // Ensure sender has enough balance to complete the transaction
       if (senderCard.balance < amount) {
         res
           .status(422)
@@ -57,8 +52,6 @@ class TransactionController {
         return
       }
 
-      // * Receiver logic *
-      // Find the receiver's card using userId and cardName (which must be "BANCA_VIRTUAL"). A user can only have one card called "BANCA_VIRTUAL"
       const receiverCard = await Card.findOne({ userId: receiverId, cardName: "BANCA_VIRTUAL" })
 
       if (!receiverCard) {
@@ -66,15 +59,12 @@ class TransactionController {
         return
       }
 
-      // Ensure that the receiver's card balance does not exceed the limit after the transaction
       if (receiverCard.balance + amount > receiverCard.limit) {
         res.status(422).json({ error: "Transaction exceeds the receiver's card limit" })
         return
       }
 
-      // * Transaction logic *
       try {
-        // Perform atomic updates to both sender and receiver cards
         await Promise.all([
           Card.updateOne(
             { _id: senderCard._id },
@@ -94,7 +84,6 @@ class TransactionController {
           ),
         ])
 
-        // Create and store the successful transaction record
         const newTransaction = new Transaction({
           senderCardId: senderCard._id,
           receiverCardId: receiverCard._id,
@@ -109,7 +98,6 @@ class TransactionController {
           transaction: newTransaction,
         })
       } catch (error) {
-        // Even when transaction fails this will be stored with the "unsuccessful" status
         const failedTransaction = new Transaction({
           senderCardId: senderCard._id,
           receiverCardId: receiverCard._id,
@@ -129,18 +117,24 @@ class TransactionController {
   }
   async addMoney(req: Request, res: Response): Promise<void> {
     try {
-      const { balance } = req.body
+      const { balance, cardDetails } = req.body
+
+      if (
+        !isValidCardNumber(cardDetails.cardNumber) ||
+        !isValidExpiryDate(cardDetails.expiryDate) ||
+        !isValidCVC(cardDetails.cvc)
+      ) {
+        res.status(400).json({ message: "Invalid card details" })
+        return
+      }
 
       const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
-      console.log("token recibido:", token)
-
       if (!token) {
         res.status(401).json({ message: "Access denied. No token provided" })
         return
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
-
       const user = await User.findByIdAndUpdate(decoded._id, { $inc: { balance } }, { new: true })
 
       if (!user) {
@@ -153,7 +147,61 @@ class TransactionController {
       })
       return
     } catch (error) {
-      console.log(error)
+      res.status(500).json({ message: "Internal server error" })
+      return
+    }
+  }
+  async findUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { cvuOrAlias } = req.body
+
+      let user
+
+      if (cvuOrAlias.length === 22) {
+        user = await User.findOne({ cvu: cvuOrAlias })
+      } else {
+        user = await User.findOne({ alias: cvuOrAlias })
+      }
+
+      if (!user) {
+        res.status(404).json({ message: "User not found" })
+        return
+      }
+
+      res.status(200).json(user)
+      return
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" })
+      return
+    }
+  }
+  async transferMoney(req: Request, res: Response) {
+    try {
+      const { cvu, amount } = req.body
+
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+
+      if (!token) {
+        res.status(401).json({ message: "Access denied. No token provided" })
+        return
+      }
+
+      const receiverUser = await User.findOne({ cvu })
+      if (!receiverUser) {
+        res.status(404).json({ message: "Receiver user not found" })
+        return
+      }
+
+      // Needs to evaluate if the one who transfers has enough money to do it.
+
+      receiverUser.balance += amount
+
+      await receiverUser.save()
+
+      res.status(200).json({ message: "Transfer successful" })
+      return
+    } catch (error) {
+      res.status(500).json({ message: "Internal server error" })
       return
     }
   }

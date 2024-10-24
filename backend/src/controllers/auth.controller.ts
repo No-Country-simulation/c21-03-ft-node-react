@@ -4,6 +4,7 @@ import Card from "../models/card.model"
 import jwt from "jsonwebtoken"
 import { getExpiryDate, generateCVV, generateCardNumber } from "../utils/card.utils"
 import { ObjectId } from "mongoose"
+import { v4 as uuidv4 } from "uuid"
 
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
@@ -27,6 +28,33 @@ class AuthController {
         return
       }
 
+      const generateUniqueCVU = async () => {
+        let cvu
+        const prefix = "20"
+        const length = 22
+        const numberLength = length - prefix.length
+
+        do {
+          const randomNumber = Array.from({ length: numberLength }, () =>
+            Math.floor(Math.random() * 10),
+          ).join("")
+          cvu = `${prefix}${randomNumber}`
+        } while (await User.findOne({ cvu }))
+
+        return cvu
+      }
+
+      const generateUniqueAlias = async () => {
+        let alias
+        do {
+          alias = `user_${uuidv4().split("-")[0]}`
+        } while (await User.findOne({ alias }))
+        return alias
+      }
+
+      const cvu = await generateUniqueCVU()
+      const alias = await generateUniqueAlias()
+
       const newUser = new User({
         user,
         email,
@@ -34,6 +62,8 @@ class AuthController {
         phone,
         birthdate,
         balance,
+        cvu,
+        alias,
       })
 
       const savedUser = await newUser.save()

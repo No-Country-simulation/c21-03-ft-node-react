@@ -31,6 +31,10 @@ const Home = () => {
     getAllUserData()
   }, [])
 
+  useEffect(() => {
+    console.log(userData)
+  }, [userData])
+
   if (checkingAuth) return null
 
   return (

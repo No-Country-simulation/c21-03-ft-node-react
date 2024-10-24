@@ -4,6 +4,8 @@ interface UserState {
   userData: userData
   getUserData: () => Promise<void>
   getUserCardData: () => Promise<void>
+  findUser: (cvuOrAlias: string) => Promise<void>
+  transferMoney: (cvu: string, amount: number) => Promise<void>
 }
 
 interface userData {
@@ -13,6 +15,8 @@ interface userData {
   phone: string
   birthdate: string
   card: Card
+  cvu: string
+  alias: string
 }
 
 interface User {
@@ -38,6 +42,8 @@ export const useUserDataStore = create<UserState>(set => ({
     phone: "",
     birthdate: "",
     card: { balance: 0, cardName: "", cardType: "", currency: "", limit: 0, status: "" },
+    cvu: "",
+    alias: "",
   },
   getUserData: async () => {
     try {
@@ -81,6 +87,47 @@ export const useUserDataStore = create<UserState>(set => ({
           card: data,
         },
       }))
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  findUser: async (cvuOrAlias: string) => {
+    try {
+      const response = await fetch("http://localhost:4444/api/transaction/find-user", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cvuOrAlias }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`)
+      }
+
+      const user = await response.json()
+      return user
+    } catch (error) {
+      console.log(error)
+    }
+  },
+  transferMoney: async (cvu: string, amount: number) => {
+    try {
+      const response = await fetch("http://localhost:4444/api/transaction/transfer", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cvu, amount }),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`)
+      }
+
+      const json = await response.json()
+      console.log(json)
     } catch (error) {
       console.log(error)
     }

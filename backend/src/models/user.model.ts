@@ -14,6 +14,8 @@ export interface UserDocument extends Document {
   birthdate: string
   phone: string
   balance: number
+  alias: string
+  cvu: string
   createdAt: Date
   updatedAt: Date
   isModified: (path: string) => boolean
@@ -59,7 +61,17 @@ const userSchema = new Schema<UserDocument>({
   },
   balance: {
     type: Number,
-    default: 0
+    default: 0,
+  },
+  alias: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  cvu: {
+    type: String,
+    required: true,
+    unique: true,
   },
   createdAt: { type: Date, default: Date.now() },
   updatedAt: { type: Date, default: Date.now() },
