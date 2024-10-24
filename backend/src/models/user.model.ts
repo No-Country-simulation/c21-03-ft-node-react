@@ -18,17 +18,7 @@ export interface UserDocument extends Document {
 
 const userSchema = new Schema<UserDocument>({
   user: {
-    username: {
-      type: String,
-      required: true,
-      minlength: [3, "Introducir al menos 3 caracteres"],
-    },
     name: {
-      type: String,
-      required: true,
-      minlength: [3, "Introducir al menos 3 caracteres."],
-    },
-    surname: {
       type: String,
       required: true,
       minlength: [3, "Introducir al menos 3 caracteres."],
@@ -41,7 +31,7 @@ const userSchema = new Schema<UserDocument>({
     unique: true,
   },
   password: {
-    type: String,
+    type: Number,
     required: true,
     minlength: [6, "Introducir al menos 6 caracteres."],
     maxlength: [64, "No introducir más de 64 caracteres."],
