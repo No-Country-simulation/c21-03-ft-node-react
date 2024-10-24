@@ -17,7 +17,7 @@ app.use(cookieParser())
 app.use(
   cors({
     origin: [
-      "http://c21-03-ft-node-react-frontend.up.railway.app",
+      "https://c21-03-ft-node-react-frontend.up.railway.app",
       "https://c21-03-ft-node-react-frontend.onrender.com",
       "http://localhost:3000",
     ],
