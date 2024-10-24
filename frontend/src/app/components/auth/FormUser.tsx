@@ -26,42 +26,34 @@ const FormUser = ({ formType }: FormUserProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("Formulario enviado: ", formData)
-
+  
     if (formType === "sign-up") {
       const registrationData = {
         user: {
           name: formData.name,
         },
         email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
+        password: formData.password
       }
-
+  
       const response = await signUp(registrationData)
       if (response.success) {
-        console.log("Registro exitoso: ", response.data)
         router.push("/")
-      } else {
-        console.error("Error en registro: ", response.error)
       }
     }
-
+  
     if (formType === "sign-in") {
       const loginData = {
-        password: formData.password,
+        email: formData.email, // Agregamos el email que faltaba
+        password: formData.password
       }
-
+  
       const response = await signIn(loginData)
       if (response.success) {
-        console.log("Inicio de sesión exitoso: ", response.data)
         router.push("/")
-      } else {
-        console.error("Error en inicio de sesión: ", response.error)
       }
     }
   }
-
   return (
     <div className="flex min-h-screen flex-col">
       <form
@@ -74,6 +66,14 @@ const FormUser = ({ formType }: FormUserProps) => {
               <legend className="mb-12 text-center font-open-sans text-4xl font-light text-[#4F4B4B]">
                 Bienvenido
               </legend>
+    <InputLabel
+      text="Email"
+      type="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      placeholder="johndoe@gmail.com"
+    />
               <div className="mb-10 flex gap-6">
                 <input
                   type="text"

@@ -55,9 +55,9 @@ export default function useAuth() {
   }
 
   const signUp = async (data: object) =>
-    authenticate("https://c21-03-ft-node-react-backend.onrender.com/api/auth/sign-up", data, "/")
+    authenticate("http://localhost:8000/api/auth/sign-up", data, "/")
   const signIn = async (data: object) =>
-    authenticate("https://c21-03-ft-node-react-backend.onrender.com/api/auth/sign-in", data, "/")
+    authenticate("http://localhost:8000/api/auth/sign-in", data, "/")
 
   return { signUp, signIn, loading, error }
 }
