@@ -8,15 +8,9 @@ interface UserState {
 
 interface userData {
   _id: string
-  user: User
+  name: string
   email: string
   card: Card
-}
-
-interface User {
-  name: string
-  surname: string
-  username: string
 }
 
 interface Card {
@@ -31,7 +25,7 @@ interface Card {
 export const useUserDataStore = create<UserState>(set => ({
   userData: {
     _id: "",
-    user: { name: "", surname: "", username: "" },
+    name: "",
     email: "",
     card: { balance: 0, cardName: "", cardType: "", currency: "", limit: 0, status: "" },
   },
@@ -48,7 +42,7 @@ export const useUserDataStore = create<UserState>(set => ({
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/auth/getdata", {
+      const response = await fetch("http://localhost:8000/api/auth/getdata", {
         method: "GET",
         credentials: "include",
         headers,
@@ -82,7 +76,7 @@ export const useUserDataStore = create<UserState>(set => ({
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/card/getCard", {
+      const response = await fetch("http://localhost:8000/api/card/getCard", {
         method: "GET",
         credentials: "include",
         headers,
