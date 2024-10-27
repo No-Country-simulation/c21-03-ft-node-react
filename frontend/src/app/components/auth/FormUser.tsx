@@ -26,134 +26,100 @@ const FormUser = ({ formType }: FormUserProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-  
-    if (formType === "sign-up") {
-      const registrationData = {
-        user: {
-          name: formData.name,
-        },
-        email: formData.email,
-        password: formData.password
-      }
-  
-      const response = await signUp(registrationData)
-      if (response.success) {
-        router.push("/")
-      }
+
+    if (formType === "sign-up" && formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden.")
+      return
     }
-  
-    if (formType === "sign-in") {
-      const loginData = {
-        email: formData.email, // Agregamos el email que faltaba
-        password: formData.password
-      }
-  
-      const response = await signIn(loginData)
-      if (response.success) {
-        router.push("/")
-      }
+
+    const response =
+      formType === "sign-up"
+        ? await signUp({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          })
+        : await signIn({
+            email: formData.email,
+            password: formData.password,
+          })
+
+    if (response.success) {
+      router.push("/")
     }
   }
+
   return (
     <div className="flex min-h-screen flex-col">
-      <form
-        onSubmit={handleSubmit}
-        className="form-container flex flex-1 flex-col items-center justify-center"
-      >
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col items-center justify-center">
         <fieldset>
+          <legend className="mb-8 text-center font-open-sans text-4xl font-light text-[#4F4B4B]">
+            {formType === "sign-in" ? "Bienvenido" : "Ingresa tus datos"}
+          </legend>
+
           {formType === "sign-in" && (
             <div>
-              <legend className="mb-12 text-center font-open-sans text-4xl font-light text-[#4F4B4B]">
-                Bienvenido
-              </legend>
-    <InputLabel
-      text="Email"
-      type="email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-      placeholder="johndoe@gmail.com"
-    />
-              <div className="mb-10 flex gap-6">
-                <input
-                  type="text"
-                  className="customs-borders h-10 w-16 text-center text-2xl outline-none"
-                  maxLength={1}
-                  name="password"
-                  //   value={formData.password}
-                  onChange={handleChange}
-                  placeholder="1"
-                  required
-                />
-                <input
-                  type="text"
-                  className="customs-borders h-10 w-16 text-center text-2xl outline-none"
-                  maxLength={1}
-                  name="password"
-                  //   value={formData.password}
-                  onChange={handleChange}
-                  placeholder="2"
-                  required
-                />
-                <input
-                  type="text"
-                  className="customs-borders h-10 w-16 text-center text-2xl outline-none"
-                  maxLength={1}
-                  name="password"
-                  //   value={formData.password}
-                  onChange={handleChange}
-                  placeholder="3"
-                  required
-                />
-                <input
-                  type="text"
-                  className="customs-borders h-10 w-16 text-center text-2xl outline-none"
-                  maxLength={1}
-                  name="password"
-                  //   value={formData.password}
-                  onChange={handleChange}
-                  placeholder="4"
-                  required
-                />
-              </div>
+              <InputLabel
+                type="email"
+                variant="sign-in"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="johndoe@example.com"
+                aria-label="Correo"
+              />
+              <InputLabel
+                type="password"
+                variant="sign-in"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="12345678"
+                aria-label="Contraseña"
+              />
             </div>
           )}
 
           {formType === "sign-up" && (
-            <>
+            <div className="mb-8 flex flex-col justify-center gap-4 font-encode-sans">
               <InputLabel
-                text="Nombre"
+                text="Nombre:"
                 type="text"
+                variant="sign-up"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="John Doe"
               />
               <InputLabel
-                text="Email"
+                text="E-mail:"
                 type="email"
+                variant="sign-up"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="johndoe@gmail.com"
               />
+
               <InputLabel
-                text="Clave"
+                text="Clave:"
                 type="password"
+                variant="sign-up"
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                placeholder="1234"
+                placeholder="********"
               />
               <InputLabel
-                text="Confirmar Clave"
+                text="Confirmar Clave:"
                 type="password"
+                variant="sign-up"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                placeholder="1234"
+                placeholder="********"
               />
-            </>
+            </div>
           )}
 
           <button
