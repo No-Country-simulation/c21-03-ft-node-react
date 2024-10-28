@@ -29,8 +29,8 @@ const cardSchema = new Schema<CardDocument>({
   balance: { type: Number, required: true },
   currency: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+  updatedAt: { type: Date, default: Date.now },
+})
 
 const Card = mongoose.model<CardDocument>("Card", cardSchema)
 

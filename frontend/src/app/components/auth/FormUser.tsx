@@ -2,7 +2,6 @@
 import { useState, ChangeEvent, FormEvent } from "react"
 import useAuth from "@/hooks/useAuth"
 import { useRouter } from "next/navigation"
-import "./FormUser.css"
 import Link from "next/link"
 import InputLabel from "./InputLabel"
 
@@ -15,14 +14,9 @@ const FormUser = ({ formType }: FormUserProps) => {
   const { signUp, signIn, loading, error } = useAuth()
   const [formData, setFormData] = useState({
     name: "",
-    surname: "",
-    username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    birthdate: "",
-    phone: "",
-    balance: "",
   })
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -32,153 +26,139 @@ const FormUser = ({ formType }: FormUserProps) => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    console.log("Formulario enviado: ", formData)
 
-    if (formType === "sign-up") {
-      const registrationData = {
-        user: {
-          username: formData.username,
-          name: formData.name,
-          surname: formData.surname,
-        },
-        email: formData.email,
-        password: formData.password,
-        confirmPassword: formData.confirmPassword,
-        phone: formData.phone,
-        birthdate: formData.birthdate,
-        balance: parseFloat(formData.balance),
-      }
-
-      const response = await signUp(registrationData)
-      if (response.success) {
-        console.log("Registro exitoso: ", response.data)
-        router.push("/")
-      } else {
-        console.error("Error en registro: ", response.error)
-      }
+    if (formType === "sign-up" && formData.password !== formData.confirmPassword) {
+      alert("Las contraseñas no coinciden.")
+      return
     }
 
-    if (formType === "sign-in") {
-      const loginData = {
-        email: formData.email,
-        password: formData.password,
-      }
+    const response =
+      formType === "sign-up"
+        ? await signUp({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+          })
+        : await signIn({
+            email: formData.email,
+            password: formData.password,
+          })
 
-      const response = await signIn(loginData)
-      if (response.success) {
-        console.log("Inicio de sesión exitoso: ", response.data)
-        router.push("/")
-      } else {
-        console.error("Error en inicio de sesión: ", response.error)
-      }
+    if (response.success) {
+      router.push("/")
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="form-container">
-      {formType === "sign-up" && (
-        <>
-          <InputLabel
-            text="Nombre"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Apellido"
-            type="text"
-            name="surname"
-            value={formData.surname}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Nombre de usuario"
-            type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Contraseña"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Confirmar contraseña"
-            type="password"
-            name="confirmPassword"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Fecha de Nacimiento"
-            type="date"
-            name="birthdate"
-            value={formData.birthdate}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Teléfono"
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Balance"
-            type="tel"
-            name="balance"
-            value={formData.balance}
-            onChange={handleChange}
-          />
-        </>
-      )}
+    <div className="flex min-h-screen flex-col">
+      <form onSubmit={handleSubmit} className="flex flex-1 flex-col items-center justify-center">
+        <fieldset>
+          <legend className="mb-8 text-center font-open-sans text-4xl font-light text-[#4F4B4B]">
+            {formType === "sign-in" ? "Bienvenido" : "Ingresa tus datos"}
+          </legend>
+
+          {formType === "sign-in" && (
+            <div>
+              <InputLabel
+                type="email"
+                variant="sign-in"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="johndoe@example.com"
+                aria-label="Correo"
+              />
+              <InputLabel
+                type="password"
+                variant="sign-in"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="12345678"
+                aria-label="Contraseña"
+              />
+            </div>
+          )}
+
+          {formType === "sign-up" && (
+            <div className="mb-8 flex flex-col justify-center gap-4 font-encode-sans">
+              <InputLabel
+                text="Nombre:"
+                type="text"
+                variant="sign-up"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+              />
+              <InputLabel
+                text="E-mail:"
+                type="email"
+                variant="sign-up"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="johndoe@gmail.com"
+              />
+
+              <InputLabel
+                text="Clave:"
+                type="password"
+                variant="sign-up"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="********"
+              />
+              <InputLabel
+                text="Confirmar Clave:"
+                type="password"
+                variant="sign-up"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="********"
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="relative mx-auto mb-4 flex h-[60px] w-[240px] items-center justify-center rounded-[80px] bg-[#6630AC] text-center text-base font-bold text-white"
+          >
+            {loading ? "Cargando..." : formType === "sign-up" ? "Crear Cuenta" : "Iniciar Sesión"}
+          </button>
+
+          {error && <p className="text-red-500">{error}</p>}
+
+          {formType === "sign-in" && (
+            <div className="flex flex-col items-end gap-1.5">
+              <Link
+                href="/create-account"
+                className="font-roboto text-xs font-normal text-[#4F4B4B]"
+              >
+                Crear cuenta
+              </Link>
+              <Link href="/" className="font-roboto text-xs font-normal text-[#4F4B4B]">
+                Olvidaste tu contraseña
+              </Link>
+            </div>
+          )}
+        </fieldset>
+      </form>
 
       {formType === "sign-in" && (
-        <>
-          <InputLabel
-            text="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <InputLabel
-            text="Contraseña"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-        </>
+        <div className="mt-auto flex w-full items-center justify-between px-16 py-6">
+          <Link href="/create-account" className="font-roboto text-xs font-normal text-[#6630AC]">
+            EMPRESA
+          </Link>
+          <Link href="/" className="font-roboto text-xs font-normal text-[#6630AC]">
+            ADMINISTRADOR
+          </Link>
+        </div>
       )}
-
-      <button type="submit" disabled={loading} className="form-button">
-        {loading ? "Cargando..." : formType === "sign-up" ? "Registrarse" : "Iniciar Sesión"}
-      </button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {formType === "sign-in" ? (
-        <Link href="/create-account" className="link-form">
-          ¿No tienes cuenta? Crea una aquí
-        </Link>
-      ) : (
-        <Link href="/login" className="link-form">
-          ¿Ya tienes cuenta? Inicia sesión aquí
-        </Link>
-      )}
-    </form>
+    </div>
   )
 }
 

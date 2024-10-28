@@ -15,7 +15,7 @@ function generateCVV(): number {
 }
 
 const isValidCardNumber = (number: string) => {
-  return /^\d{16}$/.test(number)
+  return /^\d{16}$/.test(number.replace(/\s/g, ""))
 }
 
 const isValidExpiryDate = (date: string) => {

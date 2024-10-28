@@ -59,6 +59,7 @@ class CardController {
       return
     }
   }
+
   async getCardData(req: Request, res: Response): Promise<void> {
     try {
       const token = req.cookies.token || req.headers.authorization?.split(" ")[1]

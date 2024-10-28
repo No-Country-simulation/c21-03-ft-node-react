@@ -115,6 +115,7 @@ class TransactionController {
       res.status(500).json({ error: "Failed to create transaction" })
     }
   }
+
   async addMoney(req: Request, res: Response): Promise<void> {
     try {
       const { balance, cardDetails } = req.body

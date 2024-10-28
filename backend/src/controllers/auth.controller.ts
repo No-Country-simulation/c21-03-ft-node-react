@@ -9,22 +9,16 @@ import { v4 as uuidv4 } from "uuid"
 class AuthController {
   async signUp(req: Request, res: Response): Promise<void> {
     try {
-      const { user, email, password, phone, birthdate, balance } = req.body
+      const { name, email, password } = req.body
 
-      if (!user || !email || !password || !phone || !birthdate) {
+      if (!name || !email || !password) {
         res.status(400).json({ error: "All fields are required" })
         return
       }
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      if (!emailRegex.test(email)) {
-        res.status(400).json({ error: "Invalid email format" })
-        return
-      }
-
-      const userExists = await User.findOne({ email })
-      if (userExists) {
-        res.status(400).json({ error: "Email already in use" })
+      const existingUser = await User.findOne({ email })
+      if (existingUser) {
+        res.status(400).json({ error: "Email already exists" })
         return
       }
 
@@ -56,41 +50,14 @@ class AuthController {
       const alias = await generateUniqueAlias()
 
       const newUser = new User({
-        user,
+        name,
         email,
         password: await new User().encryptPassword(password),
-        phone,
-        birthdate,
-        balance,
         cvu,
         alias,
       })
 
       const savedUser = await newUser.save()
-
-      const newCard = new Card({
-        userId: savedUser._id,
-        cardOwner: `${user.name.toUpperCase()} ${user.surname.toUpperCase()}`,
-        cardNumber: generateCardNumber(),
-        cardExpiry: getExpiryDate(),
-        cardType: "MASTER_CARD",
-        cardName: "BANCA_VIRTUAL",
-        cvv: generateCVV(),
-        status: true,
-        limit: 99999,
-        balance: 0,
-        currency: "ARS",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })
-
-      try {
-        await newCard.save()
-      } catch (error) {
-        console.error("Error saving card: ", error)
-        res.status(500).json({ error: "Failed to create card" })
-        return
-      }
 
       const token = jwt.sign({ _id: savedUser._id }, process.env.JWT_SECRET || "secret", {
         expiresIn: "1h",
@@ -102,31 +69,21 @@ class AuthController {
         maxAge: 3600000,
       })
 
-      res.status(201).json({ message: "Your account has been created!" })
-    } catch (error: unknown) {
+      res.status(201).json({
+        message: "Your account has been created!",
+        token,
+        user: {
+          _id: savedUser._id,
+          name: savedUser.name,
+          email: savedUser.email,
+        },
+      })
+    } catch (error) {
       console.error("Error in user registration: ", error)
-
-      if (error instanceof jwt.JsonWebTokenError) {
-        res.status(500).json({
-          message: "Failed to generate authentication token",
-          error: error.message,
-        })
-      } else if (error instanceof Error && error.name === "ValidationError") {
-        res.status(400).json({
-          message: "Validation failed",
-          error: error.message,
-        })
-      } else if (error instanceof Error) {
-        res.status(500).json({
-          message: "Registration failed",
-          error: "Unexpected error occurred: " + error.message,
-        })
-      } else {
-        res.status(500).json({
-          message: "Registration failed",
-          error: "An unknown error occurred",
-        })
-      }
+      res.status(500).json({
+        message: "Registration failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+      })
     }
   }
 
@@ -134,44 +91,61 @@ class AuthController {
     try {
       const { email, password } = req.body
 
-      const user = await User.findOne({ email })
-
-      if (!user) {
-        res.status(400).json({ message: "Email or password invalid" })
+      if (!email || !password) {
+        res.status(400).json({ message: "Both email and password are required" })
         return
       }
 
-      const isMatch = await user!.validatePassword(password)
+      console.log("Login attempt:", { email, password })
+
+      const user = await User.findOne({ email })
+
+      console.log("User found: ", user)
+
+      if (!user) {
+        res.status(400).json({ message: "password invalid" })
+        return
+      }
+
+      const isMatch = await user.validatePassword(password)
+
+      console.log("Password match:", isMatch)
 
       if (!isMatch) {
         res.status(400).json({ message: "Email or password invalid" })
         return
       }
 
-      const token = jwt.sign({ _id: user!._id }, process.env.JWT_SECRET || "secret", {
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET || "secret", {
         expiresIn: "1h",
       })
 
       res.cookie("token", token, {
-        httpOnly: false,
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 3600000,
       })
 
-      res.status(200).json("Logged!")
-      return
+      res.status(200).json({
+        message: "Logged in successfully!",
+        token,
+        user: {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          password: user.password,
+        },
+      })
     } catch (error) {
       console.error("Error logging in user: ", error)
-      const errorMessage = (error as Error).message || "Unknown error"
-      res.status(500).json({ message: "Sign in failed", error: errorMessage })
-      return
+      res.status(500).json({ message: "Sign in failed", error: (error as Error).message })
     }
   }
 
   async logOut(req: Request, res: Response): Promise<void> {
     try {
-      res.cookie("token", "", {
-        httpOnly: false,
+      res.clearCookie("token", {
+        httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         expires: new Date(0),
       })
@@ -187,30 +161,55 @@ class AuthController {
 
   async getData(req: Request, res: Response): Promise<void> {
     try {
-      const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+      const token =
+        req.cookies.token ||
+        (req.headers.authorization?.startsWith("Bearer ")
+          ? req.headers.authorization.slice(7)
+          : null)
 
       if (!token) {
         res.status(401).json({ message: "Access denied. No token provided" })
         return
       }
 
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+      console.log("Token recibido: ", token)
 
-      const user = await User.findById(decoded._id).select("-password")
-
-      if (!user) {
-        res.status(404).json({ message: "User not found" })
+      if (!token) {
+        res.status(401).json({ message: "Access denied. No token provided" })
         return
       }
 
-      const userId = (user._id as ObjectId).toString()
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+        console.log("Decoded token: ", decoded)
 
-      res.status(200).json({ ...user.toObject(), _id: userId })
+        const user = await User.findById(decoded._id).select("-password")
 
-      return
+        if (!user) {
+          res.status(404).json({ message: "User not found" })
+          return
+        }
+
+        const userId = (user._id as ObjectId).toString()
+
+        res.status(200).json({
+          _id: userId,
+          name: user.name,
+          email: user.email,
+        })
+      } catch (error) {
+        if (error instanceof jwt.JsonWebTokenError) {
+          console.error("JWT Error:", error)
+          res.status(401).json({ message: "Invalid token" })
+          return
+        }
+      }
     } catch (error) {
-      console.log(error)
-      return
+      console.error("Error en getData: ", error)
+      res.status(500).json({
+        message: "Server error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      })
     }
   }
 }
