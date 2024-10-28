@@ -17,10 +17,10 @@ export default function TransferTo() {
   const [userFound, setUserFound] = useState<UserFound | null>(null)
   const [amount, setAmount] = useState<number | undefined>(undefined)
 
-  const handleLookForUser = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLookForUser = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     const user = await findUser(cvuAlias)
-    setUserFound(user)
+    setUserFound(user!)
   }
 
   const handleSendMoney = async (
@@ -54,7 +54,7 @@ export default function TransferTo() {
             </h5>
             <p>CVU: {userFound?.cvu}</p>
           </div>
-          <form onSubmit={e => handleSendMoney(e, userFound.cvu, amount)}>
+          <form onSubmit={e => handleSendMoney(e, userFound.cvu, amount!)}>
             <h3>¿Cuánto querés transferir?</h3>
             <input
               type="number"
