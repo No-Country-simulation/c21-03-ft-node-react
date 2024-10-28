@@ -22,7 +22,7 @@ const ServicesNavigation = () => {
         <Link
           href={href}
           key={index}
-          className="shadow-1.5xl mx-auto flex size-[104px] flex-col items-center justify-center gap-2 rounded-[20px] bg-[#F3EDF7] text-center"
+          className="mx-auto flex size-[104px] flex-col items-center justify-center gap-2 rounded-[20px] bg-[#F3EDF7] text-center shadow-1.5xl"
         >
           <Image
             src={icon}
