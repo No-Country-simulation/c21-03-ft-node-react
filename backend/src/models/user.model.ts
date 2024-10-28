@@ -5,6 +5,7 @@ export interface UserDocument extends Document {
   name: string
   email: string
   password: string
+  balance: number
   encryptPassword(password: string): Promise<string>
   validatePassword(password: string): Promise<boolean>
   createdAt: Date
@@ -32,6 +33,10 @@ const userSchema = new Schema<UserDocument>(
       required: [true, "La contraseña es requerida"],
       minlength: [6, "Introducir al menos 6 caracteres."],
       maxlength: [64, "No introducir más de 64 caracteres."],
+    },
+    balance: {
+      type: Number,
+      default: 0,
     },
   },
   {
