@@ -76,7 +76,7 @@ export const useUserDataStore = create<UserState>(set => ({
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch("http://localhost:8000/api/card/getCard", {
+      const response = await fetch("http://localhost:8000/api/transfer/get-transfer/${name}", {
         method: "GET",
         credentials: "include",
         headers,
