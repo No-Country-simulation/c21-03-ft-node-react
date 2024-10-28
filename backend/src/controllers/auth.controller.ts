@@ -1,8 +1,6 @@
 import { Request, Response } from "express"
 import User from "../models/user.model"
-import Card from "../models/card.model"
 import jwt from "jsonwebtoken"
-import { getExpiryDate, generateCVV, generateCardNumber } from "../utils/card.utils"
 import { ObjectId } from "mongoose"
 
 class AuthController {
