@@ -2,10 +2,9 @@ import express from "express"
 import cors from "cors"
 import { config } from "dotenv"
 import connectDB from "./db/db"
-import authRoutes from "./routes/auth.routes"
 import cookieParser from "cookie-parser"
-import transactionRoutes from "./routes/transaction.routes"
-import cardRouter from "./routes/card.routes"
+import authRoutes from "./routes/auth.routes"
+import transferRouter from "./routes/transfer.routes"
 
 config()
 
@@ -26,8 +25,7 @@ app.use(
 )
 
 app.use("/api/auth", authRoutes)
-app.use("/api/transaction", transactionRoutes)
-app.use("/api/card", cardRouter)
+app.use("/api/transfer", transferRouter)
 
 const initialize = async () => {
   try {
