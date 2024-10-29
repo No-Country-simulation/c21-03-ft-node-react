@@ -1,6 +1,7 @@
 "use client"
 import { useUserDataStore } from "@/store/userDataStore"
 import { useState } from "react"
+import Title from "@/components/ui/Title"
 
 export default function AddMoney() {
   const [moneyToAdd, setMoneyToAdd] = useState(0)
@@ -37,9 +38,9 @@ export default function AddMoney() {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="money">¿Cuánto querés agregar?</label>
-      <input type="number" id="money" onChange={e => setMoneyToAdd(Number(e.target.value))} />
+    <form onSubmit={handleSubmit} className="flex flex-col items-center">
+     <Title title="¿Cuanto dinero quieres ingresar?" />
+      <input type="number" className="h-16 w-[271px] bg-[#F3EDF7] pl-6 outline-none mb-4" placeholder="1000" id="money" onChange={e => setMoneyToAdd(Number(e.target.value))} />
       <input type="submit" />
     </form>
   )
