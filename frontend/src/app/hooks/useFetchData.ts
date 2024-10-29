@@ -4,6 +4,7 @@ interface User {
   name: string
   bankName: string
   CBU: string
+  amount: number
   _id: string
   createdAt?: Date
   updatedAt?: Date
@@ -36,6 +37,7 @@ export const useFetchData = (name: string) => {
           name: data.account.name,
           bankName: data.account.bankName,
           CBU: data.account.CBU,
+          amount: data.account.amount,
           _id: data.account._id,
           createdAt: data.account.createdAt,
           updatedAt: data.account.updatedAt,
