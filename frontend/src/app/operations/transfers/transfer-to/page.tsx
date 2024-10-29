@@ -38,7 +38,7 @@ const TransferTo = () => {
 
       if (response.ok) {
         console.log("Transferencia creada", result)
-        router.push("/operations/transfers/transfer-to/scheduled-account/enter-amount")
+        router.push("/operations/transfers/transfer-to/scheduled-account")
       }
 
       setLoading(false)
