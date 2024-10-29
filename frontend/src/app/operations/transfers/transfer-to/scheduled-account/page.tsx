@@ -32,7 +32,7 @@ const ScheduledAccount = () => {
         height={17.5}
       />
 
-      {data && showModal && <Modal user={data} />}
+      {data && loading && showModal && <Modal user={data} />}
     </div>
   )
 }
