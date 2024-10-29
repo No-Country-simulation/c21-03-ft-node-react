@@ -23,7 +23,7 @@ class TransferController {
         name,
         bankName,
         CBU,
-        amount,
+        amount
       })
 
       const savedTransfer = await newTransfer.save()
@@ -67,6 +67,7 @@ class TransferController {
           name: transfer.name,
           bankName: transfer.bankName,
           CBU: transfer.CBU,
+          amount: transfer.amount,
           createdAt: transfer.createdAt,
           updatedAt: transfer.updatedAt,
         },
