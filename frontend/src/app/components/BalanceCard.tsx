@@ -21,7 +21,7 @@ const BalanceCard = ({ availableBalance }: BalanceCardProps) => {
       <h2 className="mb-3 text-lg text-[#4F4B4B]">CAJA AHORRO</h2>
       <p className="mb-6 text-sm font-bold text-[#9747FF]">Saldo disponible</p>
       <span className="mr-6 flex justify-end text-4xl font-light text-black">
-        ${availableBalance?.toLocaleString()}
+        ${availableBalance?.toLocaleString() || 0}
       </span>
     </Link>
   )
