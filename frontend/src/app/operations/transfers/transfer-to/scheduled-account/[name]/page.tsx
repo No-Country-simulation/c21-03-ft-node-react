@@ -14,7 +14,6 @@ interface BankAccount {
 const EnterAmountByName = () => {
   const { name } = useParams()
   const [bankAccount, setBankAccount] = useState<BankAccount | null>(null)
-  const [amount, setAmount] = useState<string | null>(null)
   const routeParams = useParams()
 
   useEffect(() => {
@@ -24,11 +23,10 @@ const EnterAmountByName = () => {
         const data = await response.json()
 
         if (response.ok) {
+          console.log("Monto recibido: ", data.account.amount)
           setBankAccount(data.account)
         }
 
-        const storedAmount = localStorage.getItem(`amount-${name}`)
-        setAmount(storedAmount)
       } catch (err) {
         console.error("Error fetching bank account: ", err)
       }
@@ -40,12 +38,12 @@ const EnterAmountByName = () => {
   return (
     <div className="mb-20 flex flex-col items-center justify-center">
       <Title title="REVISA LOS DATOS" />
-      {bankAccount && amount && (
-        <div className="mb-8">
-          <h2 className="text-lg font-semibold text-gray-600">{bankAccount.name}</h2>
-          <p className="text-gray-600">{bankAccount.bankName}</p>
-          <p className="text-gray-600">{bankAccount.CBU}</p>
-          <p className="text-gray-600">{amount}</p>
+      {bankAccount && (
+        <div className="mb-12 font-encode-sans text-[#4F4B4B] flex flex-col gap-2 text-center items-center justify-center">
+          <h4 className="text-lg">Nombre: {bankAccount.name}</h4>
+          <p>Banco: {bankAccount.bankName}</p>
+          <p>CBU: {bankAccount.CBU}</p>
+          <p>Monto: {bankAccount.amount.toLocaleString("es-AR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
         </div>
       )}
 
