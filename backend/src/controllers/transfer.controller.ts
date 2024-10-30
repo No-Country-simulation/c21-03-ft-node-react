@@ -13,24 +13,40 @@ class TransferController {
         return
       }
 
-      const existingAccount = await Transfer.findOne({ CBU })
-      if (existingAccount) {
-        res.status(400).json({ error: "Ya existe una cuenta con este CBU" })
+      const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
+      if (!token) {
+        res.status(401).json({ message: "Acceso denegado. No se proporcionó token" })
         return
       }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
+
+      const user = await User.findById(decoded._id)
+      if (!user) {
+        res.status(404).json({ message: "Usuario no encontrado" })
+        return
+      }
+
+      if (user.balance < amount) {
+        res.status(400).json({ message: "Saldo insuficiente para realizar la transferencia" })
+        return
+      }
+
+      user.balance -= amount
+      await user.save()
 
       const newTransfer = new Transfer({
         name,
         bankName,
         CBU,
-        amount
+        amount,
       })
 
       const savedTransfer = await newTransfer.save()
 
       res.status(201).json({
-        message: "Cuenta bancaria creada exitosamente",
-        account: {
+        message: "Transferencia realizada exitosamente",
+        transfer: {
           _id: savedTransfer._id,
           name: savedTransfer.name,
           bankName: savedTransfer.bankName,
@@ -38,11 +54,14 @@ class TransferController {
           amount: savedTransfer.amount,
           createdAt: savedTransfer.createdAt,
         },
+        balance: user.balance,
       })
+
+      return
     } catch (error) {
-      console.error("Error al crear cuenta bancaria: ", error)
+      console.error("Error al realizar la transferencia: ", error)
       res.status(500).json({
-        message: "Error al crear la transferencia",
+        message: "Error interno del servidor",
         error: error instanceof Error ? error.message : "Error desconocido",
       })
     }
@@ -72,6 +91,7 @@ class TransferController {
           updatedAt: transfer.updatedAt,
         },
       })
+      return
     } catch (error) {
       console.error("Error al obtener cuenta bancaria: ", error)
       res.status(500).json({
@@ -85,11 +105,10 @@ class TransferController {
     try {
       const { balance } = req.body
 
-      if (balance === undefined || typeof balance !== "number" || balance < 0) {
+      if (balance === undefined || typeof balance !== "number" || balance <= 0) {
         res.status(400).json({ message: "Monto inválido" })
         return
       }
-
       const token = req.cookies.token || req.headers.authorization?.split(" ")[1]
       if (!token) {
         res.status(401).json({ message: "Acceso denegado. No se proporcionó token" })
@@ -98,19 +117,23 @@ class TransferController {
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "secret") as { _id: string }
 
-      const user = await User.findByIdAndUpdate(decoded._id, { balance }, { new: true })
-
+      const user = await User.findById(decoded._id)
       if (!user) {
         res.status(404).json({ message: "Usuario no encontrado" })
         return
       }
 
+      user.balance += balance
+      await user.save()
+
       res.status(200).json({
-        message: "Balance actualizado exitosamente",
+        message: "Dinero agregado exitosamente",
         balance: user.balance,
       })
+
+      return
     } catch (error) {
-      console.error("Error al actualizar el balance:", error)
+      console.error("Error al agregar dinero:", error)
       res.status(500).json({
         message: "Error interno del servidor",
         error: error instanceof Error ? error.message : "Error desconocido",

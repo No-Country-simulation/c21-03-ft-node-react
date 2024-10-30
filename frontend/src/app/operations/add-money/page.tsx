@@ -14,14 +14,17 @@ export default function AddMoney() {
 
   const addMoney = async (balance: number) => {
     try {
-      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/transaction/addMoney", {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        "https://c21-03-ft-node-react-backend.onrender.com/api/transfer/add-money",
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ balance }),
         },
-        body: JSON.stringify({ balance }),
-      })
+      )
 
       if (!response.ok) {
         const errorData = await response.json()
@@ -32,15 +35,21 @@ export default function AddMoney() {
       console.log(json)
 
       await getUserCardData()
-    } catch (error) {
+    } catch (error) { 
       console.log(error)
     }
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col items-center">
-     <Title title="¿Cuanto dinero quieres ingresar?" />
-      <input type="number" className="h-16 w-[271px] bg-[#F3EDF7] pl-6 outline-none mb-4" placeholder="1000" id="money" onChange={e => setMoneyToAdd(Number(e.target.value))} />
+      <Title title="¿Cuanto dinero quieres ingresar?" />
+      <input
+        type="number"
+        className="mb-4 h-16 w-[271px] bg-[#F3EDF7] pl-6 outline-none"
+        placeholder="1000"
+        id="money"
+        onChange={e => setMoneyToAdd(Number(e.target.value))}
+      />
       <input type="submit" />
     </form>
   )

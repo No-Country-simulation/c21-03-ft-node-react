@@ -42,7 +42,7 @@ export const useUserDataStore = create<UserState>(set => ({
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch("http://localhost:8000/api/auth/getdata", {
+      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/auth/getdata", {
         method: "GET",
         credentials: "include",
         headers,
@@ -76,7 +76,7 @@ export const useUserDataStore = create<UserState>(set => ({
         headers.Authorization = `Bearer ${token}`
       }
 
-      const response = await fetch("http://localhost:8000/api/transfer/get-transfer/${name}", {
+      const response = await fetch(`https://c21-03-ft-node-react-backend.onrender.com/api/transfer/get-transfer/${name}`, {
         method: "GET",
         credentials: "include",
         headers,
