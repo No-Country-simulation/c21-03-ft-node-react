@@ -25,7 +25,7 @@ export const useFetchData = (name: string) => {
       setLoading(true)
 
       try {
-        const response = await fetch(`http://localhost:8000/api/transfer/get-transfer/${name}`)
+        const response = await fetch(`https://c21-03-ft-node-react-backend.onrender.com/api/transfer/get-transfer/${name}`)
 
         if (!response.ok) {
           throw new Error("Network response was not ok")

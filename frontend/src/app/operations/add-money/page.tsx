@@ -35,7 +35,7 @@ export default function AddMoney() {
       console.log(json)
 
       await getUserCardData()
-    } catch (error) {
+    } catch (error) { 
       console.log(error)
     }
   }

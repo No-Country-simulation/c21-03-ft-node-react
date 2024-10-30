@@ -23,7 +23,7 @@ const TransferTo = () => {
     e.preventDefault()
 
     try {
-      const response = await fetch("http://localhost:8000/api/transfer/create-transfer", {
+      const response = await fetch("https://c21-03-ft-node-react-backend.onrender.com/api/transfer/create-transfer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
